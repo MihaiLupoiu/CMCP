@@ -7,45 +7,62 @@
 typedef struct
 {
     float* a;
+    float* b;
     unsigned char pr;
     unsigned int n;
 }
-sumdata_t;
+dotdata_t;
 
-float ts[NUM_THREADS];
-
-void *sum(void *sumData)
+void print_vec(float* v, int n)
 {
-    sumdata_t *data = (sumdata_t*) sumData;
+    std::cout << "[ ";
 
-    int tb = data->n/NUM_THREADS;
+    for (unsigned int i = 0; i < n; i++)
+    {
+        std::cout << v[i] << ",";
+    }
+
+    std::cout << " ]";
+}
+
+void *dot(void *dotData)
+{
+    dotdata_t *data = (dotdata_t*) dotData;
+    float* a = data->a;
+    float* b = data->b;
+    int pr = data->pr;
+    int n = data->n;
+
+    int tb = n/NUM_THREADS;
 
     for (int i = 0; i < tb; i++)
     {
-        int f = i + data->pr*tb;
-        ts[data->pr] = ts[data->pr] + data->a[f];
+        int f = i + pr*tb;
+        ts[pr] = ts[pr] + a[f] * b[f];
     }
-
-    std::cout << "Suma de pr = " << (int)data->pr << ": " << ts[data->pr] << "\n";
 
     return NULL;
 }
+
+float ts[NUM_THREADS];
 
 int main (int argc, char* argv[])
 {
     pthread_t threads[NUM_THREADS];
     pthread_attr_t attr;
-    sumdata_t data[NUM_THREADS];
+    dotdata_t data[NUM_THREADS];
 
-    unsigned int n = 500;
+    unsigned int n = 10;
+
+    float* b = new float[n];
     float* a = new float[n];
-    srand(time(NULL));
 
     std::cout << "Generating vector" << std::endl;
 
     for (unsigned int i = 0; i < n; i++)
     {
-        a[i] = 1;
+        b[i] = 1;
+        a[i] = 0;
     }
 
     pthread_attr_init(&attr);
@@ -55,13 +72,13 @@ int main (int argc, char* argv[])
 
     for (unsigned char i = 0; i < NUM_THREADS; i++)
     {
-
         data[i].pr = i;
         data[i].n = n;
         data[i].a = a;
+        data[i].b = b;
         ts[i] = 0;
 
-        pthread_create(&threads[i], &attr, sum, (void*) &data[i]);
+        pthread_create(&threads[i], &attr, dot, (void*) &data[i]);
     }
 
     std::cout << "Waiting for join..." << std::endl;
@@ -70,11 +87,20 @@ int main (int argc, char* argv[])
     for (unsigned char i = 0; i < NUM_THREADS; i++)
     {
         pthread_join(threads[i], NULL);
-        s = s + ts[i];
     }
 
-    std::cout << "Total sum: " << s << std::endl;
+    std::cout << "vector a: ";
+    print_vec(a, n);
+
+    std::cout << std::endl << "vector b: ";
+    print_vec(b, n);
+
+    std::cout << std::endl << "alpha: " << alpha << std::endl;
+    std::cout << "a = b + alpha * y" << std::endl;
+    std::cout << "vector a: ";
+
     pthread_exit(NULL);
 
     delete[] a;
+    delete[] b;
 }
