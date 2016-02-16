@@ -8,10 +8,10 @@ Se detallan aspectos concretos de algunas arquitecturas (multicores, GPUs,...) y
 
 Learning Units:
 -------------
-> - Modelos computacionales físicos: Arquitecturas paralelas. 
-> - Arquitecturas multicore/GPU. Arquitectura CUDA. 
-> - Modelos computacionales paralelos. 
-> - Complejidad de los algoritmos paralelos. 
-> - Evaluación y diseño de algoritmos paralelos. 
-> - Actualizaciones y casos de estudio en el ámbito de la computación paralela. 
-> - Entornos de programación paralela. 
+> - Physical computational models: Parallel Architectures.
+> - Architectures multi core / GPU. CUDA architecture.
+> - Parallel Computational models.
+> - Complexity of parallel algorithms.
+> - Evaluation and design of parallel algorithms.
+> - Updates and case studies in the field of parallel computing.
+> - Parallel programming environments.
